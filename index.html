@@ -1,0 +1,714 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Studion - Documentação de Integração SEST SENAT</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        /* Cores oficiais do Guia Pocket DOT */
+        --dot-green: #768900; /* Maçã Verde */
+        --dot-black: #0c0a08; /* Preto Esfumado */
+        --dot-white: #fdfdfd; /* Fumaça Branca */
+        --sidebar-bg: #4a4a4a;
+        --sidebar-text: #fdfdfd;
+        --text-color: #0c0a08;
+        --code-bg: #1a1a1a;
+        --code-text: #fdfdfd;
+        --border-color: #e2e2e2;
+        --method-get: #0c0a08; /* GET em Preto conforme minimalismo do guia */
+        --method-post: #768900; /* POST em Verde DOT */
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Lato", sans-serif; /* Tipografia oficial */
+      }
+
+      body {
+        display: flex;
+        height: 100vh;
+        background-color: var(--dot-white);
+        color: var(--text-color);
+      }
+
+      /* Sidebar Styles */
+      .sidebar {
+        width: 320px;
+        background-color: var(--sidebar-bg);
+        color: var(--sidebar-text);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        border-right: 4px solid var(--dot-green); /* Detalhe em verde */
+      }
+
+      .sidebar-header {
+        padding: 30px 20px;
+        font-size: 1.4rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        border-bottom: 1px solid rgba(253, 253, 253, 0.1);
+      }
+
+      .nav-list {
+        list-style: none;
+        padding: 15px 0;
+      }
+
+      .nav-group-title {
+        padding: 15px 20px 5px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #b5cc18; /* Verde mais claro para dar contraste no fundo cinza */
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .nav-item {
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        font-weight: 300; /* Lato Light */
+        font-size: 0.95rem;
+      }
+
+      .nav-item:hover,
+      .nav-item.active {
+        background-color: rgba(118, 137, 0, 0.15);
+        font-weight: 400; /* Lato Regular */
+        color: #d1ec15;
+      }
+
+      .nav-item.active {
+        border-left: 5px solid var(--dot-green);
+      }
+
+      .method-badge {
+        font-size: 0.65rem;
+        font-weight: 700;
+        padding: 4px 8px;
+        border-radius: 3px;
+        margin-right: 12px;
+        color: white;
+        min-width: 50px;
+        text-align: center;
+      }
+
+      .method-badge.get {
+        background-color: var(--method-get);
+      }
+      .method-badge.post {
+        background-color: var(--method-post);
+      }
+      .method-badge.info {
+        background-color: var(--dot-green);
+      }
+
+      /* Main Content Styles */
+      .main-content {
+        flex: 1;
+        padding: 50px 60px;
+        overflow-y: auto;
+        background-color: var(--dot-white);
+      }
+
+      .section {
+        display: none;
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      .section.active {
+        display: block;
+        animation: fadeIn 0.4s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(5px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      h1 {
+        margin-bottom: 15px;
+        font-size: 2.4rem;
+        color: var(--dot-black);
+        font-weight: 700;
+        border-bottom: 2px solid var(--dot-green);
+      }
+      h2 {
+        margin: 40px 0 20px;
+        font-size: 1.6rem;
+        color: var(--dot-green);
+        font-weight: 400;
+      }
+      h3 {
+        margin: 25px 0 15px;
+        font-size: 1.2rem;
+        font-weight: 700;
+      }
+      p {
+        line-height: 1.7;
+        margin-bottom: 15px;
+        color: #444;
+        font-weight: 400;
+      }
+
+      .endpoint-url {
+        display: flex;
+        align-items: center;
+        background-color: #f0f0f0;
+        padding: 18px;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 1rem;
+        margin-bottom: 25px;
+        border-left: 5px solid var(--dot-black);
+      }
+
+      .endpoint-url .method-badge {
+        font-size: 0.8rem;
+        margin-right: 15px;
+      }
+
+      .server-url-box {
+        background-color: #f0f0f0;
+        padding: 15px 20px;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 1.1rem;
+        color: var(--dot-black);
+        border-left: 5px solid var(--dot-green);
+        margin: 15px 0 25px 0;
+        font-weight: 700;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 30px;
+      }
+
+      th,
+      td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      th {
+        background-color: #f8f8f8;
+        color: var(--dot-black);
+        font-weight: 700;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+      }
+
+      .required {
+        color: #d9534f;
+        font-weight: bold;
+      }
+      .optional {
+        color: #5bc0de;
+        font-weight: bold;
+      }
+
+      pre {
+        background-color: var(--code-bg);
+        color: var(--code-text);
+        padding: 25px;
+        border-radius: 4px;
+        overflow-x: auto;
+        margin-bottom: 25px;
+        border: 1px solid #333;
+      }
+
+      code {
+        font-family: "Courier New", Courier, monospace;
+      }
+
+      /* Boxes de Mensagem no Estilo DOT */
+      .alert-box {
+        background-color: #f4f4f4;
+        border-left: 4px solid var(--dot-black);
+        padding: 20px;
+        margin-bottom: 25px;
+        color: var(--dot-black);
+      }
+
+      .warning-box {
+        background-color: rgba(118, 137, 0, 0.05);
+        border-left: 4px solid var(--dot-green);
+        padding: 20px;
+        margin-bottom: 25px;
+        color: #4a5600;
+      }
+
+      .success-box {
+        background-color: #eef5e9;
+        border-left: 4px solid #4caf50;
+        padding: 20px;
+        margin-bottom: 25px;
+        color: #2e7d32;
+      }
+
+      ul {
+        margin-bottom: 20px;
+        padding-left: 20px;
+        line-height: 1.8;
+      }
+      li {
+        margin-bottom: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        API Studion.mx <br />
+        <span style="font-size: 0.7rem; font-weight: 500; color: #b5cc18"
+          >DOT Digital Group</span
+        >
+      </div>
+      <ul class="nav-list" id="navList">
+        <li class="nav-item active" onclick="showSection('intro')">
+          <span class="method-badge info">INFO</span> Introdução
+        </li>
+        <li class="nav-item" onclick="showSection('auth')">
+          <span class="method-badge post">POST</span> Autenticação
+        </li>
+
+        <div class="nav-group-title">Videoconferência</div>
+        <li class="nav-item" onclick="showSection('create-conference')">
+          <span class="method-badge post">POST</span> Criar Sala (Zoom)
+        </li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+      <div id="intro" class="section active">
+        <h1>Visão Geral da Integração SEST SENAT</h1>
+        <p>
+          Seja bem-vindo à documentação base de integração entre o ambiente do
+          <strong>SEST SENAT</strong> e a plataforma
+          <strong>Studion.mx</strong>, desenvolvida pela
+          <strong>DOT Digital Group</strong>.
+        </p>
+        <p>
+          Este documento serve como guia técnico para orientar a equipe de
+          engenharia no consumo dos serviços, começando pela autenticação da
+          aplicação e a geração de salas virtuais integradas com a
+          infraestrutura do Zoom.
+        </p>
+
+        <h2>URL Base (Host)</h2>
+        <p>
+          Para realizar as requisições de teste e homologação do projeto,
+          utilize o seguinte endereço de servidor:
+        </p>
+
+        <div class="server-url-box">
+          https://api-studion-sestsenat.hom.dotgroup.com.br
+        </div>
+
+        <div class="warning-box">
+          <strong>📝 Nota Importante sobre as Rotas:</strong> A URL base
+          descrita acima deve, obrigatoriamente, anteceder (ficar antes) de
+          todos os caminhos relativos dos endpoints listados nesta documentação.
+          <br /><br />
+          <em>Exemplo prático:</em> Se o endpoint de autenticação está mapeado
+          como <code>/api/login_check</code>, a requisição final contendo o Host
+          completo deverá ser disparada para:
+          <br />
+          <code
+            >https://api-studion-sestsenat.hom.dotgroup.com.br/api/login_check</code
+          >
+        </div>
+      </div>
+
+      <div id="auth" class="section">
+        <h1>Autenticar Usuário</h1>
+        <p>
+          Gera os tokens de acesso (Access Token) e de atualização (Refresh
+          Token) a partir das credenciais do usuário. Este token será necessário
+          para autenticar as requisições nos demais endpoints protegidos da API.
+        </p>
+
+        <div class="endpoint-url">
+          <span class="method-badge post">POST</span>
+          /api/login_check
+        </div>
+
+        <h2>Cabeçalhos (Headers)</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Tipo</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>Content-Type</code></td>
+              <td>String</td>
+              <td>
+                <span class="required">Obrigatório.</span> Valor deve ser
+                <code>application/x-www-form-urlencoded</code>.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="warning-box">
+          <strong>⚠️ Atenção:</strong> Certifique-se de enviar os dados no
+          formato <code>x-www-form-urlencoded</code>. Enviar como
+          <code>application/json</code> resultará em erro.
+        </div>
+
+        <h2>Corpo da Requisição</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Parâmetro</th>
+              <th>Tipo</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>_username</code></td>
+              <td>String</td>
+              <td>
+                <span class="required">Obrigatório.</span> O
+                e-mail/identificador de acesso.
+              </td>
+            </tr>
+            <tr>
+              <td><code>_password</code></td>
+              <td>String</td>
+              <td>
+                <span class="required">Obrigatório.</span> A senha de acesso.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>Respostas</h2>
+        <h3>200 OK (Sucesso)</h3>
+        <pre><code>{
+    "token": "eyJhbGciOiJSUzI1NiIsInR5...[JWT Omitido]",
+    "refresh_token": "eyJhbGciOiJIUzUxMiIsInR5...[Refresh Token Omitido]"
+}</code></pre>
+
+        <h2>Exemplo cURL</h2>
+        <pre><code>curl --location 'https://api-studion-sestsenat.hom.dotgroup.com.br/api/login_check' \
+--header 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode '_username=SEU_USUARIO' \
+--data-urlencode '_password=SUA_SENHA'</code></pre>
+      </div>
+
+      <div id="create-conference" class="section">
+        <h1>Criar Conferência (Integração Zoom)</h1>
+        <p>
+          Responsável por criar uma sala de videoconferência integrada entre o
+          Studion e o Zoom. Este endpoint orquestra a geração da sala, horários
+          de acesso e regras de gravação, vinculando diretamente ao host passado
+          no payload.
+        </p>
+
+        <div class="endpoint-url">
+          <span class="method-badge post">POST</span>
+          /api/conferences/conferences-rooms
+        </div>
+
+        <h2>Cabeçalhos (Headers)</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Tipo</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>Authorization</code></td>
+              <td>String</td>
+              <td>
+                <span class="required">Obrigatório.</span>
+                <code>Bearer &lt;seu_token_jwt&gt;</code>
+              </td>
+            </tr>
+            <tr>
+              <td><code>Content-Type</code></td>
+              <td>String</td>
+              <td>
+                <span class="required">Obrigatório.</span> Deve ser enviado como
+                <code>multipart/form-data</code>.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="alert-box">
+          <strong>⚠️ Formato de Envio:</strong> Diferente de outros endpoints, a
+          criação da sala exige o formato <code>multipart/form-data</code>.
+          Fique atento a isso caso esteja montando o
+          <i>payload</i> programaticamente via Axios, Fetch ou outras
+          bibliotecas HTTP.
+        </div>
+
+        <h2>Corpo da Requisição (Form Data)</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Parâmetro</th>
+              <th>Tipo</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>name</code></td>
+              <td>String</td>
+              <td>
+                <span class="required">Obrigatório.</span> Nome que será exibido
+                na sala (Ex: "Teste Bruno").
+              </td>
+            </tr>
+            <tr>
+              <td><code>start_time</code></td>
+              <td>Datetime</td>
+              <td>
+                <span class="required">Obrigatório.</span> Data e hora de início
+                no formato <code>YYYY-MM-DD HH:MM</code>.
+              </td>
+            </tr>
+            <tr>
+              <td><code>end_time</code></td>
+              <td>Datetime</td>
+              <td>
+                <span class="required">Obrigatório.</span> Data e hora de
+                término no formato <code>YYYY-MM-DD HH:MM</code>.
+              </td>
+            </tr>
+            <tr>
+              <td><code>conference_id</code></td>
+              <td>Integer</td>
+              <td>
+                <span class="required">Obrigatório.</span> ID da estrutura base
+                de conferência.
+              </td>
+            </tr>
+            <tr>
+              <td><code>host</code></td>
+              <td>String</td>
+              <td>
+                <span class="required">Obrigatório.</span> UUID do usuário
+                anfitrião da sala (Ex: <code>37ab8cd3-c12d-4d64-8513...</code>).
+              </td>
+            </tr>
+            <tr>
+              <td><code>waiting_room</code></td>
+              <td>Boolean</td>
+              <td>
+                <span class="optional">Opcional.</span> Habilita a sala de
+                espera do Zoom (1 = Sim, 0 = Não).
+              </td>
+            </tr>
+            <tr>
+              <td><code>breakout_room</code></td>
+              <td>Boolean</td>
+              <td>
+                <span class="optional">Opcional.</span> Habilita salas
+                simultâneas/equipes (1 = Sim, 0 = Não).
+              </td>
+            </tr>
+            <tr>
+              <td><code>add_to_calendar</code></td>
+              <td>Boolean</td>
+              <td>
+                <span class="optional">Opcional.</span> Adicionar aula ao vivo
+                no calendário (1 = Sim, 0 = Não).
+              </td>
+            </tr>
+            <tr>
+              <td><code>early_access</code></td>
+              <td>Boolean</td>
+              <td>
+                <span class="optional">Opcional.</span> Permitir acesso
+                antecipado à conferência. Minutos de antecedência permitidos
+                para entrar na sala.
+              </td>
+            </tr>
+            <tr>
+              <td><code>generate_video</code></td>
+              <td>Boolean</td>
+              <td>
+                <span class="optional">Opcional.</span> Permitir acesso a
+                gravação da aula ao vivo (1 = Sim, 0 = Não).
+              </td>
+            </tr>
+            <tr>
+              <td><code>percentage</code></td>
+              <td>Integer</td>
+              <td>
+                <span class="optional">Opcional.</span> Consumo mínimo da
+                gravação Ao finalizar a aula vivo uma aula é gerada
+                automaticamente. Configure a porcentagem para definir a aula ao
+                vivo como concluída.
+              </td>
+            </tr>
+            <tr>
+              <td><code>allow_advance</code></td>
+              <td>Boolean</td>
+              <td>
+                <span class="optional">Opcional.</span> Permitir que o aluno
+                avance o vídeo em conteúdos inéditos (1 = Sim, 0 = Não).
+              </td>
+            </tr>
+            <tr>
+              <td><code>mandatory</code></td>
+              <td>Boolean</td>
+              <td>
+                <span class="optional">Opcional.</span> Defina se a aula será
+                obrigatória para concluir o curso. Se houver gravação e o aluno
+                não assistir ao vivo, a gravação contará como concluída. (1 =
+                Sim, 0 = Não).
+              </td>
+            </tr>
+            <tr>
+              <td><code>image</code></td>
+              <td>Arquivo</td>
+              <td>
+                <span class="optional">Opcional.</span> Imagem da sala da aula
+                ao vivo (Passe arquivo ou `null` / `0` se não utilizado.)
+              </td>
+            </tr>
+            <tr>
+              <td><code>folderId</code></td>
+              <td>Integer</td>
+              <td>
+                <span class="optional">Opcional.</span> ID da pasta onde a aula
+                ao vivo será armazenada. Passe `null` ou `0` se não utilizado.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>Respostas</h2>
+
+        <h3>200 OK (Sucesso)</h3>
+        <p>
+          Retorna os detalhes da sala criada, vinculando os identificadores e
+          mostrando a agenda processada no padrão UTC.
+        </p>
+        <pre><code>{
+    "id": 436,
+    "active": true,
+    "schedulePeriod": {
+        "start": "2026-05-22T12:00:00+00:00",
+        "end": "2026-05-22T15:00:00+00:00",
+        "hasStarted": true,
+        "isActive": true,
+        "hasEnded": false
+    },
+    "vendorConferencesRoomsId": "82766052823",
+    "name": "Teste Bruno",
+    "image": null,
+    "url": null,
+    "host": {
+        "active": true,
+        "userData": {
+            "name": "Web Conferência",
+            "email": "studion-zoom@dotgroup.com.br"
+        }
+    },
+    "alternativeHosts": [],
+    "waitingRoom": true,
+    "breakoutRoom": true,
+    "addToCalendar": true,
+    "generateLesson": false,
+    "generateVideo": true,
+    "percentage": 70,
+    "allowAdvance": true,
+    "mandatory": true,
+    "earlyAccess": 30,
+    "hasAttachments": false
+}</code></pre>
+
+        <h3>500 Internal Server Error</h3>
+        <p>
+          Ocorre quando há problema na geração com o Zoom. O erro mais comum é
+          limite de licenças ativas excedido.
+        </p>
+        <pre><code>{
+    "code": 500,
+    "message": "license_exceeded",
+    "hint": []
+}</code></pre>
+
+        <h2>Exemplo cURL</h2>
+        <pre><code>curl --location 'https://api-studion-sestsenat.hom.dotgroup.com.br/api/conferences/conferences-rooms' \
+--header 'Accept: application/json' \
+--header 'Authorization: Bearer SEU_TOKEN_AQUI' \
+--form 'name="Teste Bruno"' \
+--form 'image="null"' \
+--form 'start_time="2026-05-22 15:00"' \
+--form 'end_time="2026-05-22 18:00"' \
+--form 'conference_id="28749"' \
+--form 'waiting_room="1"' \
+--form 'breakout_room="1"' \
+--form 'add_to_calendar="1"' \
+--form 'early_access="30"' \
+--form 'folderId="0"' \
+--form 'generate_video="1"' \
+--form 'generate_lesson="0"' \
+--form 'percentage="70"' \
+--form 'videoHasCertificate="0"' \
+--form 'allow_advance="1"' \
+--form 'mandatory="1"' \
+--form 'has_certificate="0"' \
+--form 'host="37ab8cd3-c12d-4d64-8513-6f974686a681"'</code></pre>
+      </div>
+    </main>
+
+    <script>
+      function showSection(sectionId) {
+        // Esconder todas as seções
+        document
+          .querySelectorAll(".section")
+          .forEach((el) => el.classList.remove("active"));
+
+        // Remover 'active' de todos os itens do menu
+        document
+          .querySelectorAll(".nav-item")
+          .forEach((el) => el.classList.remove("active"));
+
+        // Mostrar a seção clicada
+        document.getElementById(sectionId).classList.add("active");
+
+        // Adicionar 'active' no item do menu clicado baseado na função de click
+        event.currentTarget.classList.add("active");
+      }
+    </script>
+  </body>
+</html>
