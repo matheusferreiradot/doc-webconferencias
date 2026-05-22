@@ -23,7 +23,7 @@
         --code-bg: #1a1a1a;
         --code-text: #fdfdfd;
         --border-color: #e2e2e2;
-        --method-get: #0c0a08; /* GET em Preto conforme minimalismo do guia */
+        --method-get: #768900; /* GET em Verde DOT */
         --method-post: #768900; /* POST em Verde DOT */
       }
 
@@ -296,6 +296,9 @@
         </li>
 
         <div class="nav-group-title">Videoconferência</div>
+        <li class="nav-item" onclick="showSection('get-conference-id')">
+          <span class="method-badge get">GET</span> Listar Id Ferramenta
+        </li>
         <li class="nav-item" onclick="showSection('create-conference')">
           <span class="method-badge post">POST</span> Criar Sala (Zoom)
         </li>
@@ -425,6 +428,108 @@
 --data-urlencode '_password=SUA_SENHA'</code></pre>
       </div>
 
+      <div id="get-conference-id" class="section">
+        <h1>Listar Id da Ferramenta de Conferência</h1>
+        <p>
+          Responsável por listar as ferramentas disponíveis em uma turma do
+          Studion, retornando os identificadores de cada ferramenta (como
+          <code>course</code> e <code>conference</code>). O
+          <code>id</code> retornado para o alias <code>conference</code> deve
+          ser utilizado como <code>conference_id</code> na criação da sala de
+          videoconferência.
+        </p>
+
+        <div class="endpoint-url">
+          <span class="method-badge get">GET</span>
+          /api/sessions/{session_id}/tools
+        </div>
+
+        <h2>Parâmetros de Rota</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Parâmetro</th>
+              <th>Tipo</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>session_id</code></td>
+              <td>Integer</td>
+              <td>
+                <span class="required">Obrigatório.</span> ID numérico da turma
+                Studion (Ex: <code>8380</code>). Deve ser enviado como inteiro —
+                valores em formato de string causarão erro de tipagem na API.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>Cabeçalhos (Headers)</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Tipo</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>Authorization</code></td>
+              <td>String</td>
+              <td>
+                <span class="required">Obrigatório.</span>
+                <code>Bearer &lt;seu_token_jwt&gt;</code>
+              </td>
+            </tr>
+            <tr>
+              <td><code>Content-Type</code></td>
+              <td>String</td>
+              <td>
+                <span class="required">Obrigatório.</span> Deve ser enviado como
+                <code>application/x-www-form-urlencoded</code>.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="alert-box">
+          <strong>⚠️ Tipagem do session_id:</strong> Garanta que o
+          <code>session_id</code> seja passado como número inteiro na URL. A API
+          rejeita valores que não possam ser interpretados como
+          <code>int</code>, retornando erro de argumento inválido.
+        </div>
+
+        <h2>Respostas</h2>
+
+        <h3>200 OK (Sucesso)</h3>
+        <p>
+          Retorna a lista de ferramentas habilitadas na turma. Utilize o
+          <code>id</code> do item cujo <code>alias</code> seja
+          <code>conference</code> como <code>conference_id</code> na criação da
+          sala.
+        </p>
+        <pre><code>[
+    {
+        "id": 27269,
+        "alias": "course",
+        "description": "Course"
+    },
+    {
+        "id": 28749,
+        "alias": "conference",
+        "description": "Conference"
+    }
+]</code></pre>
+
+        <h2>Exemplo cURL</h2>
+        <pre><code>curl --location 'https://api-studion-sestsenat.hom.dotgroup.com.br/api/sessions/8380/tools' \
+--header 'Content-Type: application/x-www-form-urlencoded' \
+--header 'Authorization: Bearer SEU_TOKEN_AQUI'</code></pre>
+      </div>
+
       <div id="create-conference" class="section">
         <h1>Criar Conferência (Integração Zoom)</h1>
         <p>
@@ -491,7 +596,7 @@
               <td>String</td>
               <td>
                 <span class="required">Obrigatório.</span> Nome que será exibido
-                na sala (Ex: "Teste Bruno").
+                na sala (Ex: "Webconferência de Exemplo ").
               </td>
             </tr>
             <tr>
@@ -603,14 +708,6 @@
                 ao vivo (Passe arquivo ou `null` / `0` se não utilizado.)
               </td>
             </tr>
-            <tr>
-              <td><code>folderId</code></td>
-              <td>Integer</td>
-              <td>
-                <span class="optional">Opcional.</span> ID da pasta onde a aula
-                ao vivo será armazenada. Passe `null` ou `0` se não utilizado.
-              </td>
-            </tr>
           </tbody>
         </table>
 
@@ -632,7 +729,7 @@
         "hasEnded": false
     },
     "vendorConferencesRoomsId": "82766052823",
-    "name": "Teste Bruno",
+    "name": "Webconferência de Exemplo",
     "image": null,
     "url": null,
     "host": {
@@ -670,7 +767,7 @@
         <pre><code>curl --location 'https://api-studion-sestsenat.hom.dotgroup.com.br/api/conferences/conferences-rooms' \
 --header 'Accept: application/json' \
 --header 'Authorization: Bearer SEU_TOKEN_AQUI' \
---form 'name="Teste Bruno"' \
+--form 'name="Webconferência de Exemplo "' \
 --form 'image="null"' \
 --form 'start_time="2026-05-22 15:00"' \
 --form 'end_time="2026-05-22 18:00"' \
